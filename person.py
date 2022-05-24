@@ -7,30 +7,39 @@ from __future__ import annotations
 
 
 class Person:
-    def __init__(self, name, location_state, personality_scales=None, emotional_state=None, social_state=None):
+    def __init__(self, name: str, location_state: Room, personality: dict | None = None, emotional_state: dict | None = None):
+        # Initialize the person's name
         self.name = name
 
-        self.action_type_probs = {"verbal": 1/3,
-                                  "non-verbal": 1/3, "move": 1/3}
-        self.personality_scales = personality_scales if personality_scales != None else {
-            "openness": 0,
-            "conscientiousness": 0,
-            "extraversion": 0,
-            "agreeableness": 0,
-            "neuroticism": 0
-        }
-        # PAD model of emotions
-        self.emotional_state = emotional_state if emotional_state != None else {
-            "pleasure_displeasure": 0,
-            "arousal_nonarousal": 0,
-            "dominance_submissiveness": 0
-        }
-        self.social_state = social_state if social_state != None else dict()
+        # Personality (Modelled by the "Big 5" personality scales).
+        # OCEAN: openness, conscientiousness, extraversion, agreeableness, neuroticism
+        # Personality is expressed as a 5 dimensional vector, on a scale from 1 to -1.
+        # Dimensions are (in this order):
+        # Openness: open to new experiences, curious (1 is highly open)
+        # Conscientiousness: responsible, self-disciplined (1 is highly conscientious)
+        # Extraversion: energetic, sociable, talkative (1 is highly extraverted)
+        # Agreeableness: cooperative, pleasant with others, sociable (1 is highly agreeable)
+        # Neuroticism: nervous, anxious, suspicious (1 is highly neurotic)
+        self.personality = personality if personality else np.zeros(5)
 
+        # Person's current emotional state (Modelled by the "PAD" emotional model)
+        # PAD: Pleasure, Arousal, Dominance
+        # Emotional state is expressed as a 3 dimensional vector, on a scale from 1 to -1.
+        # Dimensions are (in this order):
+        # Pleasure: how much one is happy (1 is highly happy)
+        # Arousal: how much one is excited (1 is highly excited)
+        # Dominance: how much one is dominant (1 is highly dominant)
+        self.emotional_state = emotional_state if emotional_state else np.zeros(
+            3)
+
+        # The base action probabilities are derived solely from personality.
+        # This means they are static, and do not change over time.
+        # N.B. These probabilities are analagous to the emotional_action_probs,
+        # but those must be derived for the current emotional state, which changes over time.
         self.base_action_probs = self.get_base_action_probs(
             self.personality_scales)
 
-        # Initialise the location state to the given location, otherwise
+        # Initialise the location state to the given location
         self.location_state = location_state
         # Add self to the collection of people in the room
         self.location_state.add_person(self)
