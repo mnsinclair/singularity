@@ -23,6 +23,8 @@ class Person:
         }
         self.social_state = social_state if social_state != None else dict()
 
+        self.base_action_probs = self.get_base_action_probs(self.personality_scales)
+
         # Initialise the location state to the given location, otherwise
         self.location_state = location_state
         # Add self to the collection of people in the room
@@ -30,6 +32,48 @@ class Person:
 
     def __repr__(self):
         return self.name
+
+    def get_base_action_probs(self, personality):
+        pass
+
+    def get_emotional_action_probs(self, pad):
+        pass
+
+    def filter_probs(self, probs_dict, available_conv_act, available_room_act):
+        filtered_probs = dict()
+        total_sum = 0
+        # eliminate invalid actions
+        for action in available_conv_act:
+            filtered_probs[action] = probs_dict[action]
+            total_sum += probs_dict[action]
+
+        for action in available_room_act:
+            filtered_probs[action] = probs_dict[action]
+            total_sum += probs_dict[action]
+
+        filtered_probs = {action: prob/total_sum for action, prob in filtered_probs.items()}
+
+        return filtered_probs
+
+
+    def combine_emotion_base_probs(self, emotion_probs, base_probs, weighting=0.5):
+        combined_probs = dict()
+        for key in emotion_probs.keys():
+            combined_probs[key] = (emotion_probs[key] * weighting + base_probs[key] / (1 + weighting))
+        return combined_probs
+
+    def action_selection(self, available_conv_act, available_room_act):
+        # Get action probabilities based on persons emotional state
+        emotional_action_probs = self.get_emotional_action_probs(self.emotional_state)
+        # remove invalid actions from selection
+        filtered_emotional_probs = self.filter_probs(emotional_action_probs, available_conv_act, available_room_act)
+        filtered_base_probs = self.filter_probs(self.base_action_probs, available_conv_act, available_room_act)
+
+        combined_probs = self.combine_emotion_base_probs(filtered_emotional_probs, filtered_base_probs)
+        action = np.random.choice(combined_probs.keys(), p=combined_probs.values())
+
+        return action
+
 
     def take_action(self, type=None):
         """This funciton selects the action to take next and returns it."""
