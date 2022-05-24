@@ -75,9 +75,28 @@ class Person:
         assert self.conversation_partner == None, "Cannot change location while in conversation"
         self.location_state = location_state
 
+    def get_base_action_probs(self) -> dict:
+        """This function returns the "base action probabilities" for the person, 
+        derived solely from the "personality" attribute.
+
+        This encodes the effect of personality on the action taken.
+
+        Args:
+            None
+        Returns:
+            A dictionary of action types as keys and their probabilities as values.
+        """
         pass
 
-    def get_emotional_action_probs(self, pad):
+    def get_emotional_action_probs(self) -> dict:
+        """This function returns the "emotional action probabilities" for the person, 
+        derived solely from the "emotional_state" attribute.
+
+        Args:
+            None
+        Returns:
+            A dictionary of action types as keys and their probabilities as values.
+        """
         pass
 
     def filter_probs(self, probs_dict, available_conv_act, available_room_act):
