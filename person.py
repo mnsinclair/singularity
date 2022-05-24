@@ -1,5 +1,9 @@
 import numpy as np
 from action import Action
+from typing import List
+from room import Room
+# Allows type hint to have Person class (get_conversation_partner())
+from __future__ import annotations
 
 
 class Person:
