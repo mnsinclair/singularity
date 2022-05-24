@@ -46,10 +46,35 @@ class Person:
         # Initialise the conversation partner
         self.conversation_partner = conversation_partner
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.name
 
-    def get_base_action_probs(self, personality):
+    def has_conversation_partner(self) -> bool:
+        return self.conversation_partner != None
+
+    def get_conversation_partner(self) -> Person | None:
+        return self.conversation_partner
+
+    def set_conversation_partner(self, partner):
+        assert(self.conversation_partner == None), "Already in a conversation"
+        assert(partner.conversation_partner ==
+               None), "Partner already in a conversation"
+        assert(self.location_state ==
+               partner.location_state), "Partner not in same location"
+        assert(self.name != partner.name), "Cannot have conversation with self"
+
+        self.conversation_partner = partner
+
+    def get_location_state(self) -> Room:
+        """Returns location state"""
+        return self.location_state
+
+    def set_location_state(self, location_state: Room):
+        """Sets the location state of the person"""
+        assert self.location_state != location_state, "Already in this location"
+        assert self.conversation_partner == None, "Cannot change location while in conversation"
+        self.location_state = location_state
+
         pass
 
     def get_emotional_action_probs(self, pad):
