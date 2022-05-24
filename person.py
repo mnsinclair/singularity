@@ -119,7 +119,12 @@ class Person:
 
         return filtered_probs
 
-    def combine_emotion_base_probs(self, emotion_probs, base_probs, weighting=0.5):
+    def combine_emotion_base_probs(self, emotion_probs: dict, base_probs: dict, weighting: float = 0.5) -> dict:
+        """This function combines the emotional action probabilities with the base action probabilities, and returns the result as a dictionary"""
+        assert weighting >= 0 and weighting <= 1, "weighting must be between 0 and 1"
+        assert emotion_probs.keys() == base_probs.keys(
+        ), "Emotion and base action probabilities must have the same actions as keys"
+
         combined_probs = dict()
         for key in emotion_probs.keys():
             combined_probs[key] = (
