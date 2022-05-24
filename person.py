@@ -99,18 +99,21 @@ class Person:
         """
         pass
 
-    def filter_probs(self, probs_dict, available_conv_act, available_room_act):
+    def filter_probs(self, probs_dict: dict, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> dict:
+        """This function filters out the invalid actions from the given action probabilities."""
         filtered_probs = dict()
         total_sum = 0
-        # eliminate invalid actions
+        # add only actions in available_conv_act
         for action in available_conv_act:
             filtered_probs[action] = probs_dict[action]
             total_sum += probs_dict[action]
 
+        # add only actions in available_room_act
         for action in available_room_act:
             filtered_probs[action] = probs_dict[action]
             total_sum += probs_dict[action]
 
+        # Normalise the relevant probabilities so they sum to 1
         filtered_probs = {action: prob/total_sum for action,
                           prob in filtered_probs.items()}
 
