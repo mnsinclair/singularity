@@ -7,7 +7,7 @@ from __future__ import annotations
 
 
 class Person:
-    def __init__(self, name: str, location_state: Room, personality: dict | None = None, emotional_state: dict | None = None):
+    def __init__(self, name: str, location_state: Room, personality: dict | None = None, emotional_state: dict | None = None, conversation_partner: Person | None = None):
         # Initialize the person's name
         self.name = name
 
@@ -43,6 +43,8 @@ class Person:
         self.location_state = location_state
         # Add self to the collection of people in the room
         self.location_state.add_person(self)
+        # Initialise the conversation partner
+        self.conversation_partner = conversation_partner
 
     def __repr__(self):
         return self.name
