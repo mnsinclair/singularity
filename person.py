@@ -76,6 +76,8 @@ class Person:
 
     def set_base_action_probs(self) -> dict:
         """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
+        assert(self.base_action_probs ==
+               None), "Base action probabilities already set"
         pass
 
     def get_location_state(self) -> Room:
