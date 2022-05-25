@@ -7,7 +7,7 @@ from room import Room
 
 
 class Person:
-    def __init__(self, name: str, location_state: Room, personality: dict | None = None, emotional_state: dict | None = None, conversation_partner: Person | None = None):
+    def __init__(self, name: str, location_state: Room, personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None):
         # Initialize the person's name
         self.name = name
 
@@ -20,7 +20,8 @@ class Person:
         # Extraversion: energetic, sociable, talkative (1 is highly extraverted)
         # Agreeableness: cooperative, pleasant with others, sociable (1 is highly agreeable)
         # Neuroticism: nervous, anxious, suspicious (1 is highly neurotic)
-        self.personality = personality if personality else np.zeros(5)
+        self.personality_vector = personality_vector if personality_vector else np.zeros(
+            5)
 
         # Person's current emotional state (Modelled by the "PAD" emotional model)
         # PAD: Pleasure, Arousal, Dominance
@@ -29,7 +30,7 @@ class Person:
         # Pleasure: how much one is happy (1 is highly happy)
         # Arousal: how much one is excited (1 is highly excited)
         # Dominance: how much one is dominant (1 is highly dominant)
-        self.emotional_state = emotional_state if emotional_state else np.zeros(
+        self.emotional_state_vector = emotional_state_vector if emotional_state_vector else np.zeros(
             3)
 
         # The base action probabilities are derived solely from personality.
