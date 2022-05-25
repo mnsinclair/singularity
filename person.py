@@ -76,7 +76,7 @@ class Person:
                ), "Emotional state vector values must be between -1 and 1"
         self.__emotional_state_vector = emotional_state_vector
 
-    def get_base_action_probs(self):
+    def get_base_action_probs(self) -> dict:
         """Returns the base action probabilities"""
         return self.__base_action_probs
 
