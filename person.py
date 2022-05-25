@@ -130,16 +130,31 @@ class Person:
 
     def get_emotional_action_probs(self) -> dict:
         """This function returns the "emotional action probabilities" for the person, 
-        derived solely from the "emotional_state_vector" attribute.
+        derived solely from the "emotional_state_vector" attribute."""
 
-        Args:
-            None
-        Returns:
-            A dictionary of action types as keys and their probabilities as values.
-        """
-        pass
+        # Initialise an empty dictionary
+        emotional_action_probs = dict()
+        # Loop through all possible actions
+        for action in self.__all_possible_actions:
+            # Get the "most likely emotional state" for the action
+            most_likely_emotional_vector = action.get_most_likely_emotional_vector()
+            # Compute the distance between this person's emotional state and the most likely emotional state
+            emotional_state_distance = np.linalg.norm(
+                self.__emotional_state_vector - most_likely_emotional_vector)
+            # We want the probability to be inversely proportional to the distance.
+            # That is, the more closely this person's emotional state aligns with the "most likely emotional state" for the action
+            # The more likely this person is to take that action.
+            emotional_action_probs[action] = 1 / emotional_state_distance
+        # Normalise the action probabilities to sum to 1
+        emotional_action_probs = self.normalise_action_probs(
+            emotional_action_probs)
+        return emotional_action_probs
 
-    def filter_probs(self, probs_dict: dict, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> dict:
+    def normalise_action_probs(self, probs: dict) -> dict:
+        total_sum = sum(probs.values())
+        # Normalise the relevant probabilities so they sum to 1
+        return {action: likelihood/total_sum for action, likelihood in probs.items()}
+
         """This function filters out the invalid actions from ALL action probabilities."""
         filtered_probs = dict()
         total_sum = 0
