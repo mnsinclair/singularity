@@ -3,11 +3,11 @@ from __future__ import annotations
 import numpy as np
 from action import Action
 from typing import List
-from room import Room
+import room
 
 
 class Person:
-    def __init__(self, name: str, location_state: Room, personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None, all_possible_actions: List[Action] = None):
+    def __init__(self, name: str, location_state: room.Room, personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None, all_possible_actions: List[Action] = None):
         # Initialize the person's name
         self.__name = name
 
@@ -86,11 +86,11 @@ class Person:
                None), "Base action probabilities already set"
         pass
 
-    def get_location_state(self) -> Room:
+    def get_location_state(self) -> room.Room:
         """Returns location state"""
         return self.__location_state
 
-    def set_location_state(self, location_state: Room):
+    def set_location_state(self, location_state: room.Room):
         """Sets the location state of the person"""
         assert self.__location_state != location_state, "Already in this location"
         assert self.__conversation_partner == None, "Cannot change location while in conversation"
