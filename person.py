@@ -37,8 +37,7 @@ class Person:
         # This means they are static, and do not change over time.
         # N.B. These probabilities are analagous to the emotional_action_probs,
         # but those must be derived for the current emotional state, which changes over time.
-        self.base_action_probs = self.get_base_action_probs(
-            self.personality_scales)
+        self.base_action_probs = self.set_base_action_probs()
 
         # Initialise the location state to the given location
         self.location_state = location_state
@@ -50,6 +49,36 @@ class Person:
 
     def __repr__(self) -> str:
         return self.name
+
+    def get_name(self) -> str:
+        """Returns the name of the person"""
+        return self.name
+
+    def get_personality_vector(self) -> np.array:
+        """Returns the personality vector of the person"""
+        return self.personality_vector
+
+    def get_emotional_state_vector(self) -> np.array:
+        """Returns the emotional state vector of the person"""
+        return self.emotional_state_vector
+
+    def get_base_action_probs(self):
+        """Returns the base action probabilities"""
+        return self.base_action_probs
+
+    def set_base_action_probs(self) -> dict:
+        """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
+        pass
+
+    def get_location_state(self) -> Room:
+        """Returns location state"""
+        return self.location_state
+
+    def set_location_state(self, location_state: Room):
+        """Sets the location state of the person"""
+        assert self.location_state != location_state, "Already in this location"
+        assert self.conversation_partner == None, "Cannot change location while in conversation"
+        self.location_state = location_state
 
     def has_conversation_partner(self) -> bool:
         return self.conversation_partner != None
@@ -66,29 +95,6 @@ class Person:
         assert(self.name != partner.name), "Cannot have conversation with self"
 
         self.conversation_partner = partner
-
-    def get_location_state(self) -> Room:
-        """Returns location state"""
-        return self.location_state
-
-    def set_location_state(self, location_state: Room):
-        """Sets the location state of the person"""
-        assert self.location_state != location_state, "Already in this location"
-        assert self.conversation_partner == None, "Cannot change location while in conversation"
-        self.location_state = location_state
-
-    def get_base_action_probs(self) -> dict:
-        """This function returns the "base action probabilities" for the person, 
-        derived solely from the "personality" attribute.
-
-        This encodes the effect of personality on the action taken.
-
-        Args:
-            None
-        Returns:
-            A dictionary of action types as keys and their probabilities as values.
-        """
-        pass
 
     def get_emotional_action_probs(self) -> dict:
         """This function returns the "emotional action probabilities" for the person, 
@@ -137,7 +143,7 @@ class Person:
         """This function selects an action from the given available actions."""
         # Get action probabilities for ALL actions, based on persons current emotional state
         emotional_action_probs = self.get_emotional_action_probs(
-            self.emotional_state)
+            self.emotional_state_vector)
 
         # filter to get the (emotional and base) distribution for only AVAILABLE actions.
         filtered_emotional_probs = self.filter_probs(
