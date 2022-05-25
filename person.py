@@ -210,15 +210,18 @@ class Person:
 
         return action
 
-    # Method to handle updating emotional_state_vector (for both own action, and partner's action)
+    # Method to handle updating emotional_state_vector (for either own action, and partner's action)
     def update_emotional_state_vector(self, action: Action, isOwnAction: bool):
-        if isOwnAction:
-            # update own emotional state vector
-            pass
-        else:
-            # update partner's emotional state vector
-            pass
-        pass
+        # Get the vector to use in the update from the action, depending on whether it is the own action or the partner's action
+        change_vector = action.get_given_emotional_change_vector(
+        ) if isOwnAction else action.get_received_emotional_change_vector()
+
+        # Get the new emotional state vector by adding state and change vectors
+        new_emotional_state_vector = self.get_emotional_state_vector(
+        ) + change_vector
+
+        # Set the new emotional state vector
+        self.set_emotional_state_vector(new_emotional_state_vector)
 
     # Methods to handle special non-conversation actions
     def leave_conversation(self):
