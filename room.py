@@ -32,17 +32,19 @@ class Room:
         """Returns room name"""
         return self.__name
 
-    def add_person(self, person):
+    def add_person(self, person_to_add):
         """Adds a person to the room"""
         assert(
-            person not in self.__people), f"{person} is already in {self.__name}"
-        assert(type(person) == person.Person), f"{person} is not a person"
-        self.__people.add(person)
+            person_to_add not in self.__people), f"{person_to_add} is already in {self.__name}"
+        assert(type(person_to_add) ==
+               person.Person), f"{person_to_add} is not a person"
+        self.__people.add(person_to_add)
 
-    def remove_person(self, person):
+    def remove_person(self, person_to_add):
         """Removes a person from the room"""
-        assert(person in self.__people), f"{person} is not in {self.__name}"
-        self.__people.remove(person)
+        assert(
+            person_to_add in self.__people), f"{person_to_add} is not in {self.__name}"
+        self.__people.remove(person_to_add)
 
     def has_person(self, person):
         """Returns true if the person is in the room"""
