@@ -155,6 +155,7 @@ class Person:
         # Normalise the relevant probabilities so they sum to 1
         return {action: likelihood/total_sum for action, likelihood in probs.items()}
 
+    def filter_action_probs(self, probs_dict: dict, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> dict:
         """This function filters out the invalid actions from ALL action probabilities."""
         filtered_probs = dict()
         total_sum = 0
@@ -168,9 +169,7 @@ class Person:
             filtered_probs[action] = probs_dict[action]
             total_sum += probs_dict[action]
 
-        # Normalise the relevant probabilities so they sum to 1
-        filtered_probs = {action: prob/total_sum for action,
-                          prob in filtered_probs.items()}
+        filtered_probs = self.normalise_action_probs(filtered_probs)
 
         return filtered_probs
 
