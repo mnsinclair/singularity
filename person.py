@@ -129,7 +129,7 @@ class Person:
         self.__conversation_partner = partner
 
     def get_emotional_action_probs(self) -> dict:
-        """This function returns the "emotional action probabilities" for the person, 
+        """This function returns the "emotional action probabilities" for the person,
         derived solely from the "emotional_state_vector" attribute."""
 
         # Initialise an empty dictionary
@@ -193,11 +193,11 @@ class Person:
 
         # If available_conv_act or available_room_act are given, then filter out the invalid actions
         if available_conv_act or available_room_act:
-        # filter to get the (emotional and base) distribution for only AVAILABLE actions.
+            # filter to get the (emotional and base) distribution for only AVAILABLE actions.
             filtered_emotional_probs = self.filter_action_probs(
-            emotional_action_probs, available_conv_act, available_room_act)
+                emotional_action_probs, available_conv_act, available_room_act)
             filtered_base_probs = self.filter_action_probs(
-            self.__base_action_probs, available_conv_act, available_room_act)
+                self.__base_action_probs, available_conv_act, available_room_act)
         else:  # If no available actions are given, then use the full distributions
             filtered_emotional_probs = emotional_action_probs
             filtered_base_probs = self.__base_action_probs
