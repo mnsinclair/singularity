@@ -7,7 +7,7 @@ import room
 
 
 class Person:
-    def __init__(self, name: str, location_state: room.Room, personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None, all_possible_actions: List[Action] = None):
+    def __init__(self, name: str, location_state: room.Room, all_possible_actions: List[Action], personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None):
         # Initialize the person's name
         self.__name = name
 
@@ -78,7 +78,22 @@ class Person:
 
     def get_base_action_probs(self) -> dict:
         """Returns the base action probabilities"""
-        return self.__base_action_probs
+        # Initialise an empty dictionary
+        base_action_probs = dict()
+        # Loop through all possible actions
+        for action in self.__all_possible_actions:
+            # Get the "most likely personality" for the action
+            most_likely_personality_vector = action.get_most_likely_personality_vector()
+            # Compute the distance between this person's personality and the most likely personality
+            personality_distance = np.linalg.norm(
+                self.__personality_vector - most_likely_personality_vector)
+            # We want the probability to be inversely proportional to the distance.
+            # That is, the more closely this personality aligns with the "most likely personality" for the action
+            # The more likely this person is to take that action.
+            base_action_probs[action] = 1 / personality_distance
+        # Normalise the action probabilities to sum to 1
+        base_action_probs = self.normalise_action_probs(base_action_probs)
+        return base_action_probs
 
     def set_base_action_probs(self) -> dict:
         """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
@@ -114,18 +129,34 @@ class Person:
         self.__conversation_partner = partner
 
     def get_emotional_action_probs(self) -> dict:
-        """This function returns the "emotional action probabilities" for the person, 
-        derived solely from the "emotional_state" attribute.
+        """This function returns the "emotional action probabilities" for the person,
+        derived solely from the "emotional_state_vector" attribute."""
 
-        Args:
-            None
-        Returns:
-            A dictionary of action types as keys and their probabilities as values.
-        """
-        pass
+        # Initialise an empty dictionary
+        emotional_action_probs = dict()
+        # Loop through all possible actions
+        for action in self.__all_possible_actions:
+            # Get the "most likely emotional state" for the action
+            most_likely_emotional_vector = action.get_most_likely_emotional_vector()
+            # Compute the distance between this person's emotional state and the most likely emotional state
+            emotional_state_distance = np.linalg.norm(
+                self.__emotional_state_vector - most_likely_emotional_vector)
+            # We want the probability to be inversely proportional to the distance.
+            # That is, the more closely this person's emotional state aligns with the "most likely emotional state" for the action
+            # The more likely this person is to take that action.
+            emotional_action_probs[action] = 1 / emotional_state_distance
+        # Normalise the action probabilities to sum to 1
+        emotional_action_probs = self.normalise_action_probs(
+            emotional_action_probs)
+        return emotional_action_probs
 
-    def filter_probs(self, probs_dict: dict, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> dict:
-        """This function filters out the invalid actions from the given action probabilities."""
+    def normalise_action_probs(self, probs: dict) -> dict:
+        total_sum = sum(probs.values())
+        # Normalise the relevant probabilities so they sum to 1
+        return {action: likelihood/total_sum for action, likelihood in probs.items()}
+
+    def filter_action_probs(self, probs_dict: dict, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> dict:
+        """This function filters out the invalid actions from ALL action probabilities."""
         filtered_probs = dict()
         total_sum = 0
         # add only actions in available_conv_act
@@ -138,9 +169,7 @@ class Person:
             filtered_probs[action] = probs_dict[action]
             total_sum += probs_dict[action]
 
-        # Normalise the relevant probabilities so they sum to 1
-        filtered_probs = {action: prob/total_sum for action,
-                          prob in filtered_probs.items()}
+        filtered_probs = self.normalise_action_probs(filtered_probs)
 
         return filtered_probs
 
@@ -156,25 +185,43 @@ class Person:
                 emotion_probs[key] * weighting + base_probs[key] / (1 + weighting))
         return combined_probs
 
-    def action_selection(self, available_conv_act: List[Action], available_room_act: List[Action]) -> Action:
+    def action_selection(self, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> Action:
         """This function selects an action from the given available actions."""
         # Get action probabilities for ALL actions, based on persons current emotional state
         emotional_action_probs = self.get_emotional_action_probs(
             self.__emotional_state_vector)
 
-        # filter to get the (emotional and base) distribution for only AVAILABLE actions.
-        filtered_emotional_probs = self.filter_probs(
-            emotional_action_probs, available_conv_act, available_room_act)
-        filtered_base_probs = self.filter_probs(
-            self.__base_action_probs, available_conv_act, available_room_act)
+        # If available_conv_act or available_room_act are given, then filter out the invalid actions
+        if available_conv_act or available_room_act:
+            # filter to get the (emotional and base) distribution for only AVAILABLE actions.
+            filtered_emotional_probs = self.filter_action_probs(
+                emotional_action_probs, available_conv_act, available_room_act)
+            filtered_base_probs = self.filter_action_probs(
+                self.__base_action_probs, available_conv_act, available_room_act)
+        else:  # If no available actions are given, then use the full distributions
+            filtered_emotional_probs = emotional_action_probs
+            filtered_base_probs = self.__base_action_probs
 
-        # combine the two distributions
+        # Combine the two distributions
         combined_probs = self.combine_emotion_base_probs(
             filtered_emotional_probs, filtered_base_probs)
         action = np.random.choice(
             combined_probs.keys(), p=combined_probs.values())
 
         return action
+
+    # Method to handle updating emotional_state_vector (for either own action, and partner's action)
+    def update_emotional_state_vector(self, action: Action, isOwnAction: bool):
+        # Get the vector to use in the update from the action, depending on whether it is the own action or the partner's action
+        change_vector = action.get_given_emotional_change_vector(
+        ) if isOwnAction else action.get_received_emotional_change_vector()
+
+        # Get the new emotional state vector by adding state and change vectors
+        new_emotional_state_vector = self.get_emotional_state_vector(
+        ) + change_vector
+
+        # Set the new emotional state vector
+        self.set_emotional_state_vector(new_emotional_state_vector)
 
     # Methods to handle special non-conversation actions
     def leave_conversation(self):
