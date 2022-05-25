@@ -7,9 +7,9 @@ from room import Room
 
 
 class Person:
-    def __init__(self, name: str, location_state: Room, personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None):
+    def __init__(self, name: str, location_state: Room, personality_vector: np.array | None = None, emotional_state_vector: np.array | None = None, conversation_partner: Person | None = None, all_possible_actions: List[Action] = None):
         # Initialize the person's name
-        self.name = name
+        self.__name = name
 
         # Personality (Modelled by the "Big 5" personality scales).
         # OCEAN: openness, conscientiousness, extraversion, agreeableness, neuroticism
@@ -20,7 +20,7 @@ class Person:
         # Extraversion: energetic, sociable, talkative (1 is highly extraverted)
         # Agreeableness: cooperative, pleasant with others, sociable (1 is highly agreeable)
         # Neuroticism: nervous, anxious, suspicious (1 is highly neurotic)
-        self.personality_vector = personality_vector if personality_vector else np.zeros(
+        self.__personality_vector = personality_vector if personality_vector else np.zeros(
             5)
 
         # Person's current emotional state (Modelled by the "PAD" emotional model)
@@ -30,81 +30,88 @@ class Person:
         # Pleasure: how much one is happy (1 is highly happy)
         # Arousal: how much one is excited (1 is highly excited)
         # Dominance: how much one is dominant (1 is highly dominant)
-        self.emotional_state_vector = emotional_state_vector if emotional_state_vector else np.zeros(
+        self.__emotional_state_vector = emotional_state_vector if emotional_state_vector else np.zeros(
             3)
 
         # The base action probabilities are derived solely from personality.
         # This means they are static, and do not change over time.
         # N.B. These probabilities are analagous to the emotional_action_probs,
         # but those must be derived for the current emotional state, which changes over time.
-        self.base_action_probs = self.set_base_action_probs()
+        self.__base_action_probs = None
+        self.set_base_action_probs()
 
         # Initialise the location state to the given location
-        self.location_state = location_state
+        self.__location_state = location_state
         # Add self to the collection of people in the room
-        self.location_state.add_person(self)
+        self.__location_state.add_person(self)
 
         # Initialise the conversation partner
-        self.conversation_partner = conversation_partner
+        self.__conversation_partner = conversation_partner
+
+        # Initialise the all possible actions
+        self.__all_possible_actions = all_possible_actions
 
     def __repr__(self) -> str:
-        return self.name
+        return self.__name
 
     def get_name(self) -> str:
         """Returns the name of the person"""
-        return self.name
+        return self.__name
 
     def get_personality_vector(self) -> np.array:
         """Returns the personality vector of the person"""
-        return self.personality_vector
+        return self.__personality_vector
 
     def get_emotional_state_vector(self) -> np.array:
         """Returns the emotional state vector of the person"""
-        return self.emotional_state_vector
+        return self.__emotional_state_vector
 
     def set_emotional_state_vector(self, emotional_state_vector: np.array):
         """Sets the emotional state vector of the person"""
+        assert(type(emotional_state_vector) ==
+               np.ndarray), "Emotional state vector must be a numpy array"
         assert(len(emotional_state_vector) ==
                3), "Emotional state vector must be 3 dimensional"
         assert(np.all(emotional_state_vector >= -1) and np.all(emotional_state_vector <= 1)
                ), "Emotional state vector values must be between -1 and 1"
-        self.emotional_state_vector = emotional_state_vector
+        self.__emotional_state_vector = emotional_state_vector
 
     def get_base_action_probs(self):
         """Returns the base action probabilities"""
-        return self.base_action_probs
+        return self.__base_action_probs
 
     def set_base_action_probs(self) -> dict:
         """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
-        assert(self.base_action_probs ==
+        assert(self.__base_action_probs ==
                None), "Base action probabilities already set"
         pass
 
     def get_location_state(self) -> Room:
         """Returns location state"""
-        return self.location_state
+        return self.__location_state
 
     def set_location_state(self, location_state: Room):
         """Sets the location state of the person"""
-        assert self.location_state != location_state, "Already in this location"
-        assert self.conversation_partner == None, "Cannot change location while in conversation"
-        self.location_state = location_state
+        assert self.__location_state != location_state, "Already in this location"
+        assert self.__conversation_partner == None, "Cannot change location while in conversation"
+        self.__location_state = location_state
 
     def has_conversation_partner(self) -> bool:
-        return self.conversation_partner != None
+        return self.__conversation_partner != None
 
     def get_conversation_partner(self) -> Person | None:
-        return self.conversation_partner
+        return self.__conversation_partner
 
     def set_conversation_partner(self, partner):
-        assert(self.conversation_partner == None), "Already in a conversation"
+        assert(self.__conversation_partner ==
+               None), "Already in a conversation"
         assert(partner.conversation_partner ==
                None), "Partner already in a conversation"
-        assert(self.location_state ==
+        assert(self.__location_state ==
                partner.location_state), "Partner not in same location"
-        assert(self.name != partner.name), "Cannot have conversation with self"
+        assert(self.__name != partner.name), "Cannot have conversation with self"
 
-        self.conversation_partner = partner
+        self.__conversation_partner = partner
 
     def get_emotional_action_probs(self) -> dict:
         """This function returns the "emotional action probabilities" for the person, 
@@ -153,13 +160,13 @@ class Person:
         """This function selects an action from the given available actions."""
         # Get action probabilities for ALL actions, based on persons current emotional state
         emotional_action_probs = self.get_emotional_action_probs(
-            self.emotional_state_vector)
+            self.__emotional_state_vector)
 
         # filter to get the (emotional and base) distribution for only AVAILABLE actions.
         filtered_emotional_probs = self.filter_probs(
             emotional_action_probs, available_conv_act, available_room_act)
         filtered_base_probs = self.filter_probs(
-            self.base_action_probs, available_conv_act, available_room_act)
+            self.__base_action_probs, available_conv_act, available_room_act)
 
         # combine the two distributions
         combined_probs = self.combine_emotion_base_probs(
@@ -172,10 +179,10 @@ class Person:
     # Methods to handle special non-conversation actions
     def leave_conversation(self):
         """This function handles the special case of a person leaving a conversation."""
-        assert self.conversation_partner != None, "No conversation partner to leave"
-        if self.conversation_partner.has_conversation_partner():
-            self.conversation_partner.leave_conversation()
-        self.conversation_partner = None
+        assert self.__conversation_partner != None, "No conversation partner to leave"
+        if self.__conversation_partner.has_conversation_partner():
+            self.__conversation_partner.leave_conversation()
+        self.__conversation_partner = None
 
     def move_to_room(self, room):
         """This function handles the special case of a person moving to a new room."""
