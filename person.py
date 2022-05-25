@@ -62,6 +62,14 @@ class Person:
         """Returns the emotional state vector of the person"""
         return self.emotional_state_vector
 
+    def set_emotional_state_vector(self, emotional_state_vector: np.array):
+        """Sets the emotional state vector of the person"""
+        assert(len(emotional_state_vector) ==
+               3), "Emotional state vector must be 3 dimensional"
+        assert(np.all(emotional_state_vector >= -1) and np.all(emotional_state_vector <= 1)
+               ), "Emotional state vector values must be between -1 and 1"
+        self.emotional_state_vector = emotional_state_vector
+
     def get_base_action_probs(self):
         """Returns the base action probabilities"""
         return self.base_action_probs
