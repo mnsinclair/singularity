@@ -176,6 +176,16 @@ class Person:
 
         return action
 
+    # Method to handle updating emotional_state_vector (for both own action, and partner's action)
+    def update_emotional_state_vector(self, action: Action, isOwnAction: bool):
+        if isOwnAction:
+            # update own emotional state vector
+            pass
+        else:
+            # update partner's emotional state vector
+            pass
+        pass
+
     # Methods to handle special non-conversation actions
     def leave_conversation(self):
         """This function handles the special case of a person leaving a conversation."""
