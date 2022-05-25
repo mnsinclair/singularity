@@ -185,19 +185,24 @@ class Person:
                 emotion_probs[key] * weighting + base_probs[key] / (1 + weighting))
         return combined_probs
 
-    def action_selection(self, available_conv_act: List[Action], available_room_act: List[Action]) -> Action:
+    def action_selection(self, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> Action:
         """This function selects an action from the given available actions."""
         # Get action probabilities for ALL actions, based on persons current emotional state
         emotional_action_probs = self.get_emotional_action_probs(
             self.__emotional_state_vector)
 
+        # If available_conv_act or available_room_act are given, then filter out the invalid actions
+        if available_conv_act or available_room_act:
         # filter to get the (emotional and base) distribution for only AVAILABLE actions.
-        filtered_emotional_probs = self.filter_probs(
+            filtered_emotional_probs = self.filter_action_probs(
             emotional_action_probs, available_conv_act, available_room_act)
-        filtered_base_probs = self.filter_probs(
+            filtered_base_probs = self.filter_action_probs(
             self.__base_action_probs, available_conv_act, available_room_act)
+        else:  # If no available actions are given, then use the full distributions
+            filtered_emotional_probs = emotional_action_probs
+            filtered_base_probs = self.__base_action_probs
 
-        # combine the two distributions
+        # Combine the two distributions
         combined_probs = self.combine_emotion_base_probs(
             filtered_emotional_probs, filtered_base_probs)
         action = np.random.choice(
