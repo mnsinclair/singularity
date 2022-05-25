@@ -78,7 +78,22 @@ class Person:
 
     def get_base_action_probs(self) -> dict:
         """Returns the base action probabilities"""
-        return self.__base_action_probs
+        # Initialise an empty dictionary
+        base_action_probs = dict()
+        # Loop through all possible actions
+        for action in self.__all_possible_actions:
+            # Get the "most likely personality" for the action
+            most_likely_personality_vector = action.get_most_likely_personality_vector()
+            # Compute the distance between this person's personality and the most likely personality
+            personality_distance = np.linalg.norm(
+                self.__personality_vector - most_likely_personality_vector)
+            # We want the probability to be inversely proportional to the distance.
+            # That is, the more closely this personality aligns with the "most likely personality" for the action
+            # The more likely this person is to take that action.
+            base_action_probs[action] = 1 / personality_distance
+        # Normalise the action probabilities to sum to 1
+        base_action_probs = self.normalise_action_probs(base_action_probs)
+        return base_action_probs
 
     def set_base_action_probs(self) -> dict:
         """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
