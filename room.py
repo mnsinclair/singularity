@@ -40,19 +40,24 @@ class Room:
         self.__people.add(person)
 
     def remove_person(self, person):
+        """Removes a person from the room"""
+        assert(person in self.__people), f"{person} is not in {self.__name}"
         self.__people.remove(person)
 
     def has_person(self, person):
+        """Returns true if the person is in the room"""
         return person in self.__people
 
     def get_people(self):
+        """Returns the people in the room"""
         return self.__people
 
     def get_adjacent_rooms(self):
-        # Get the adjacent rooms to this one
+        """Returns the adjacent rooms to this room"""
         return self.__adjacent_rooms
 
     def get_adjacent_room_names(self):
+        """Returns the names of the adjacent rooms"""
         return [x.get_name() for x in self.get_adjacent_rooms()]
 
     def add_adjacent_room(self, other_room):
