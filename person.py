@@ -115,7 +115,7 @@ class Person:
 
     def get_emotional_action_probs(self) -> dict:
         """This function returns the "emotional action probabilities" for the person, 
-        derived solely from the "emotional_state" attribute.
+        derived solely from the "emotional_state_vector" attribute.
 
         Args:
             None
@@ -125,7 +125,7 @@ class Person:
         pass
 
     def filter_probs(self, probs_dict: dict, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> dict:
-        """This function filters out the invalid actions from the given action probabilities."""
+        """This function filters out the invalid actions from ALL action probabilities."""
         filtered_probs = dict()
         total_sum = 0
         # add only actions in available_conv_act
