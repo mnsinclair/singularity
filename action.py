@@ -26,10 +26,10 @@ class Action:
         ===========================
         Name: {self.__name}
         Type of action: {self.__action_type}
-        Emotional Vector for the action: {self.__most_likely_emotional_vector}
-        Personality Vector for the action: {self.__most_likely_personality_vector}
-        Emotional Change Vector for the action taken by Partner: {self.__received_emotional_change_vector}
-        Emotional Change Vector for the action taken by Self: {self.__given_emotional_change_vector}
+        Emotional vector where action most likely: {self.__most_likely_emotional_vector_PAD}
+        Personality vector where action most likely: {self.__most_likely_personality_vector_PAD}
+        Emotional change vector when the action taken by Partner: {self.__received_emotional_change_vector_PAD}
+        Emotional change vector when the action taken by Self: {self.__given_emotional_change_vector_PAD}
         """
 
     def __repr__(self) -> str:
