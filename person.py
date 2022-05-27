@@ -206,6 +206,8 @@ class Person:
         for key in emotion_probs.keys():
             combined_probs[key] = (
                 emotion_probs[key] * weighting + base_probs[key] / (1 + weighting))
+        combined_probs = self.normalise_action_probs(combined_probs)
+
         return combined_probs
 
     def action_selection(self, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> Action:
