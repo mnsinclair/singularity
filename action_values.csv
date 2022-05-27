@@ -1,0 +1,20 @@
+action_name,action_type,most_likely_emotional_vector_PAD,most_likely_personality_vector_OCEAN,received_emotional_change_vector_PAD,given_emotional_change_vector_PAD
+shouts,conversation,"[0,1,1]","[0, 0, 1, 0, -1]","[-0.01, 0.05, -0.01]","[0.015, 0.05, 0.05]"
+shares,conversation,"[1,0,0]","[1, 0, 1, 0, -1]","[0.002, 0.001, -0.0001]","[0.002, 0.001, 0.0001]"
+leaves_the_conversation,conversation,"[-1, -1, -1]","[0,0, -1, -1, 1]","[0, -0.3, -0.3]","[0.0, 0.3, 0.3]"
+makes_smalltalk,conversation,"[0, 1, 0]","[-1, 0, 1, 0, 0]","[-0.001, -0.001, -0.001]","[0.001, 0.001, 0.001]"
+makes_deeptalk,conversation,"[1,1,0]","[1, 0, 1, 0, 0]","[0.05, 0.05, 0]","[0.05, 0.05, 0]"
+gives_controversial_opinion,conversation,"[0, 1, 1]","[1, -1, 1, -1, -1]","[-0.01, 0.03, 0.03]","[0.01, 0.03, 0.03]"
+changes_the_topic,conversation,"[0, -1, 1]","[1, -1, 0, -1, -1]","[-0.01, -0.05, -0.02]","[0.01, 0.05, 0.01]"
+shows_interest,conversation,"[1, 1, 0]","[1, 0, 0, 1, 0]","[0.001, 0.002, 0.001]","[0.001, 0.002, -0.001]"
+shows_concern,conversation,"[-1, 1, -1]","[0, 0, 0, 1, 1]","[-0.001, 0.002, -0.001]","[-0.001, 0.002, 0]"
+laughs,conversation,"[1, 1, 0]","[0, 0, 0, 0, -1]","[0.002, 0.001, 0.001]","[0.005, 0.001, 0]"
+jokes,conversation,"[1, 1, 1]","[0, 0, 1, 1, -1]","[0.005, 0.002, 0]","[0.005, 0.001, 0.002]"
+gives_an_insult,conversation,"[-1, 1, 1]","[0, 0, 0, -1, 1]","[-0.005, 0.005, -0.002]","[0.005, 0.002, 0.005]"
+brags,conversation,"[1, 1, 1]","[0, 0, 1, 0, -1]","[-0.003, -0.003, -0.0005]","[0.005, 0.002, 0.001]"
+yawns,conversation,"[0, -1, 0]","[0,0,0,0,0]","[-0.002, 0, -0.001]","[0, 0, 0.003]"
+supports,conversation,"[1, 1, -1]","[0, 0, 1,1,0]","[0.004, 0, 0.0001]","[0.003, 0, -0.0002]"
+rants,conversation,"[-1, 1, 1]","[0, 0, 1, -1, 0]","[-0.002, -0.002, -0.002]","[0.002, 0.001, 0.004]"
+stands_in_corner,room,"[0, 1, -1]","[0, 0, -1, -1, 1]",,
+leaves_room,room,"[0, 0, 0]","[0, 0, 0, -1, 0]",,
+starts_conversation,room,"[0, -1, 0]","[0, 0, 1, 1, -1]",,
