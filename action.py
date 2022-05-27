@@ -3,18 +3,21 @@ import numpy as np
 
 
 class Action:
-    def __init__(self, name: str, action_type: str, most_likely_emotional_vector: np.array | None = None, most_likely_personality_vector: np.array | None = None, received_emotional_change_vector: np.array | None = None, given_emotional_change_vector: np.array | None = None):
-        self.__name = name  # The name of the action
+    def __init__(self, action_name: str, action_type: str, most_likely_emotional_vector_PAD: np.array = np.zeros(
+            3), most_likely_personality_vector_OCEAN: np.array = np.zeros(
+            5), received_emotional_change_vector_PAD: np.array = np.zeros(
+            3), given_emotional_change_vector_PAD: np.array = np.zeros(3)):
+        self.__name = action_name  # The name of the action
         # The PAD vector that the action most closely matches
-        self.__most_likely_emotional_vector = most_likely_emotional_vector if most_likely_emotional_vector else np.zeros(3)
+        self.__most_likely_emotional_vector_PAD = most_likely_emotional_vector_PAD
         # The Personality vector that most closely matches the action
-        self.__most_likely_personality_vector = most_likely_personality_vector if most_likely_personality_vector else np.zeros(5)
+        self.__most_likely_personality_vector_PAD = most_likely_personality_vector_OCEAN
         # The Personality vector that shows how the Person is who is receiving
         # the action will be affected by this action
-        self.__received_emotional_change_vector = received_emotional_change_vector if received_emotional_change_vector else np.zeros(3)
+        self.__received_emotional_change_vector_PAD = received_emotional_change_vector_PAD
         # The Personality vector that shows how the Person is who is taking the action
         # will be affected by this action
-        self.__given_emotional_change_vector = given_emotional_change_vector if given_emotional_change_vector else np.zeros(3)
+        self.__given_emotional_change_vector_PAD = given_emotional_change_vector_PAD
         # The type of action i.e. conversation or room
         self.__action_type = action_type
 
