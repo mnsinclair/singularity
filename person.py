@@ -47,8 +47,22 @@ class Person:
         # Initialise the conversation partner
         self.__conversation_partner = conversation_partner
 
-        # Initialise the all possible actions
-        self.__all_possible_actions = all_possible_actions
+    def get_snapshot(self):
+        """Returns a snapshot of the person's current state"""
+        snapshot = {
+            "name": self.__name,
+            "personality_vector": self.__personality_vector.copy(),
+            "emotional_state": self.__emotional_state_vector.copy(),
+            "base_action_probs": self.__base_action_probs.copy(),
+            "location_state": self.__location_state.get_name(),
+        }
+
+        if self.has_conversation_partner():
+            snapshot["conversation_partner"] = self.__conversation_partner.get_name()
+        else:
+            snapshot["conversation_partner"] = None
+
+        return snapshot
 
     def __repr__(self) -> str:
         return self.__name
