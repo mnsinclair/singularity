@@ -6,17 +6,13 @@ import person
 
 
 class Room:
-    def __init__(self, name: str, adjacent_rooms: Set[Room] = set(), people_in_room: Set[person.Person] = set()):
+    def __init__(self, name: str):
         assert(type(name) == str), f"{name} is not a string"
-        assert(np.array([type(room) == Room for room in adjacent_rooms]).all(
-        )), f"{adjacent_rooms} is not a set of rooms"
-        assert(np.array([type(person) == person.Person for person in people_in_room]).all(
-        )), f"{adjacent_rooms} is not a set of people"
 
         self.__name = name  # The name of the room
         self.__people = set()  # The set of people currently in the room
         # The set of rooms that are adjacent to this room. Empty to start with.
-        self.__adjacent_rooms = adjacent_rooms
+        self.__adjacent_rooms = set()
 
     def __repr__(self):
         return f"""
