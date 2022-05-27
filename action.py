@@ -45,16 +45,16 @@ class Action:
 
     def get_most_likely_emotional_vector(self) -> np.array:
         """Returns the Emotional vector(PAD) for an action"""
-        return self.__most_likely_emotional_vector
+        return self.__most_likely_emotional_vector_PAD
 
     def get_most_likely_personality_vector(self) -> np.array:
         """Returns the Personality (Big 5) vector for an action"""
-        return self.__most_likely_personality_vector
+        return self.__most_likely_personality_vector_PAD
 
     def get_received_emotional_change_vector(self) -> np.array:
         """Returns the changes in Emotional vector(PAD) for an action taken by the conversation partner"""
-        return self.__received_emotional_change_vector
+        return self.__received_emotional_change_vector_PAD
 
     def get_given_emotional_change_vector(self) -> np.array:
         """Returns the changes in Emotional vector(PAD) for an action taken by self"""
-        return self.__given_emotional_change_vector
+        return self.__given_emotional_change_vector_PAD
