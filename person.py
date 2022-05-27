@@ -12,6 +12,9 @@ class Person:
         # Initialize the person's name
         self.__name = name
 
+        # Initialise the all possible actions
+        self.__all_possible_actions = all_possible_actions
+
         # Personality (Modelled by the "Big 5" personality scales).
         # OCEAN: openness, conscientiousness, extraversion, agreeableness, neuroticism
         # Personality is expressed as a 5 dimensional vector, on a scale from 1 to -1.
@@ -213,8 +216,7 @@ class Person:
     def action_selection(self, available_conv_act: List[Action] = [], available_room_act: List[Action] = []) -> Action:
         """This function selects an action from the given available actions."""
         # Get action probabilities for ALL actions, based on persons current emotional state
-        emotional_action_probs = self.get_emotional_action_probs(
-            self.__emotional_state_vector)
+        emotional_action_probs = self.get_emotional_action_probs()
 
         # If available_conv_act or available_room_act are given, then filter out the invalid actions
         if available_conv_act or available_room_act:
@@ -230,8 +232,10 @@ class Person:
         # Combine the two distributions
         combined_probs = self.combine_emotion_base_probs(
             filtered_emotional_probs, filtered_base_probs)
+
+        # Select an action based on the combined distribution
         action = np.random.choice(
-            combined_probs.keys(), p=combined_probs.values())
+            list(combined_probs.keys()), p=list(combined_probs.values()))
 
         return action
 
@@ -266,3 +270,8 @@ class Person:
         self.set_location_state(to_room)
         # Add self to the new room 'people set'
         to_room.add_person(self)
+
+    def get_next_room(self) -> room.Room:
+        """Selects & returns the next room to go to"""
+        # For now, this selection is uniformly random.
+        return np.random.choice(list(self.get_location_state().get_adjacent_rooms()))
