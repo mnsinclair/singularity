@@ -24,6 +24,14 @@ class Room:
         Adjacent to: {self.get_adjacent_room_names()}
         """
 
+    def is_someone_free_to_chat(self):
+        """Returns true if someone is free to chat in this room"""
+        for person in self.__people:
+            if not person.has_conversation_partner():
+                return True
+        else:
+            return False
+
     def get_name(self):
         """Returns room name"""
         return self.__name
