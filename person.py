@@ -128,11 +128,11 @@ class Person:
         """Returns location state"""
         return self.__location_state
 
-    def set_location_state(self, location_state: room.Room):
+    def set_location_state(self, new_location_state: room.Room):
         """Sets the location state of the person"""
-        assert self.__location_state != location_state, "Already in this location"
+        assert self.__location_state != new_location_state, "Already in this location"
         assert self.__conversation_partner == None, "Cannot change location while in conversation"
-        self.__location_state = location_state
+        self.__location_state = new_location_state
 
     def has_conversation_partner(self) -> bool:
         return self.__conversation_partner != None
