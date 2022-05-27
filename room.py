@@ -73,6 +73,7 @@ class Room:
             other_room not in self.__adjacent_rooms), f"{other_room} is already adjacent to {self.__name}"
         # Add an adjacent room to the set of adjacent rooms
         self.__adjacent_rooms.add(other_room)
-        # Adjacency is reflexive (if A is adjacent to B, then B is adjacent to A)
+
         if self not in other_room.get_adjacent_rooms():
+            # Add this room to the set of adjacent rooms of the other room
             other_room.add_adjacent_room(self)
