@@ -91,6 +91,15 @@ class Person:
 
     def get_base_action_probs(self) -> dict:
         """Returns the base action probabilities"""
+        return self.__base_action_probs
+
+    def set_base_action_probs(self) -> dict:
+        """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
+        assert(self.__base_action_probs ==
+               None), "Base action probabilities already set"
+
+        max_likelihood = 1000  # Arbitrary large number.
+
         # Initialise an empty dictionary
         base_action_probs = dict()
         # Loop through all possible actions
@@ -103,16 +112,17 @@ class Person:
             # We want the probability to be inversely proportional to the distance.
             # That is, the more closely this personality aligns with the "most likely personality" for the action
             # The more likely this person is to take that action.
-            base_action_probs[action] = 1 / personality_distance
+            if personality_distance == 0:
+                # If the distance is 0, then the likelihood is maximum
+                base_action_probs[action] = max_likelihood
+            else:
+                # Otherwise, the likelihood is inversely proportional to the distance (up to the maximum value)
+                # This happens when the distance is less than 0.001 units in magnitude.
+                base_action_probs[action] = min(
+                    1 / personality_distance, max_likelihood)
         # Normalise the action probabilities to sum to 1
-        base_action_probs = self.normalise_action_probs(base_action_probs)
-        return base_action_probs
-
-    def set_base_action_probs(self) -> dict:
-        """This function returns the "base action probabilities" for the person, derived solely from the "personality" attribute."""
-        assert(self.__base_action_probs ==
-               None), "Base action probabilities already set"
-        pass
+        self.__base_action_probs = self.normalise_action_probs(
+            base_action_probs)
 
     def get_location_state(self) -> room.Room:
         """Returns location state"""
