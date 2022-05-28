@@ -9,7 +9,7 @@ import room
 class Person:
     def __init__(self, name: str, location_state: room.Room, all_possible_actions: List[Action], personality_vector: np.array = np.zeros(5), emotional_state_vector: np.array = np.zeros(
             3), conversation_partner: Person | None = None):
-        # Initialize the person's name
+        # Initialize the person's name. This MUST be unique.
         self.__name = name
 
         # Initialise the all possible actions
