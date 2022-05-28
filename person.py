@@ -144,13 +144,11 @@ class Person:
         return self.__conversation_partner
 
     def set_conversation_partner(self, partner):
-        assert(self.__conversation_partner ==
-               None), "Already in a conversation"
-        assert(partner.conversation_partner ==
-               None), "Partner already in a conversation"
+        if partner != None:
         assert(self.__location_state ==
-               partner.location_state), "Partner not in same location"
-        assert(self.__name != partner.name), "Cannot have conversation with self"
+                   partner.get_location_state()), "Partner not in same location"
+            assert(self.__name != partner.get_name()
+                   ), "Cannot have conversation with self"
 
         self.__conversation_partner = partner
 
