@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from action import Action
+from person import Person
 
-#import names
 import os
 
 
@@ -40,10 +40,28 @@ def initialise_all_actions(action_filepath="action_values.csv"):
     return np.array(actions_initialised)
 
 
-def get_names(filepath="names.csv", num_names=32):
-    if filepath in os.listdir():
-        names = pd.read_csv(filepath, header=None).squeeze("columns")
-    else:
-        names = pd.Series([names.get_first_name() for _ in range(num_names)])
-        names.to_csv("names.csv", index=None, header=None)
-    return names
+def get_names(filepath="names.csv"):
+    return pd.read_csv(filepath, header=None).squeeze("columns")
+
+
+def get_personality_vector(personality_number):
+    personality_seed = personality_number % 32
+    personality_vector_string = bin(personality_seed)[2:]
+    personality_vector_string = "0" * \
+        (5 - len(personality_vector_string)) + personality_vector_string
+    return np.array([int(char) for char in personality_vector_string])
+
+
+def initialise_all_people(all_possible_actions, rooms, num_people=32):
+    all_people = []
+    # TODO get_names() should depend on num_people.
+    names = get_names()
+    for personality_number in range(num_people):
+        personality_vector = get_personality_vector(personality_number)
+        initial_emotional_state_vector = np.random.uniform(
+            low=-1, high=1, size=3)
+        initial_location_state = np.random.choice(rooms)
+        new_person = Person(name=names[personality_number], location_state=initial_location_state, all_possible_actions=all_possible_actions,
+                            personality_vector=personality_vector, emotional_state_vector=initial_emotional_state_vector, conversation_partner=None)
+        all_people.append(new_person)
+    return all_people

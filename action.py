@@ -37,7 +37,7 @@ class Action:
 
     def get_snapshot(self):
         """Returns a snapshot of the action"""
-        return {"name": self.__name, }
+        return {"action_name": self.__name, }
 
     def get_name(self) -> str:
         """Returns the name of the action"""
