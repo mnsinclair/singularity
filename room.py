@@ -25,8 +25,11 @@ class Room:
         """
 
     def is_someone_free_to_chat(self):
-        """Returns true if someone is free to chat in this room"""
+        """Returns true if someone ELSE is free to chat in this room"""
         for person in self.__people:
+            # skip yourself
+            if person.get_name() == self.get_name():
+                continue
             if not person.has_conversation_partner():
                 return True
         else:
