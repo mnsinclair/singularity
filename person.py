@@ -145,8 +145,8 @@ class Person:
 
     def set_conversation_partner(self, partner):
         if partner != None:
-        assert(self.__location_state ==
-                   partner.get_location_state()), "Partner not in same location"
+            assert(self.__location_state == partner.get_location_state()
+                   ), "Partner not in same location"
             assert(self.__name != partner.get_name()
                    ), "Cannot have conversation with self"
 
