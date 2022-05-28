@@ -35,9 +35,9 @@ class Room:
         else:
             return False
 
-    def get_conversation_partner(self):
-        """Randomly selects the first person in this who is free to chat"""
-        return np.random.choice([person for person in self.__people if not person.has_conversation_partner()])
+    def get_new_conversation_partner_for(self, person):
+        """Randomly selects the first OTHER person in this room who is free to chat"""
+        return np.random.choice([partner for partner in self.__people if ((not partner.has_conversation_partner()) and (partner.get_name() != person.get_name()))])
 
     def get_name(self):
         """Returns room name"""
