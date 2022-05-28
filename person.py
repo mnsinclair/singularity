@@ -144,7 +144,12 @@ class Person:
             # We want the probability to be inversely proportional to the distance.
             # That is, the more closely this person's emotional state aligns with the "most likely emotional state" for the action
             # The more likely this person is to take that action.
-            emotional_action_probs[action] = 1 / emotional_state_distance
+            if emotional_state_distance == 0:
+                emotional_action_probs[action] = 0
+            else:
+                emotional_action_probs[action] = 1 / emotional_state_distance
+                if emotional_action_probs[action]<0.01:
+                    emotional_action_probs[action] = 0
         # Normalise the action probabilities to sum to 1
         emotional_action_probs = self.normalise_action_probs(
             emotional_action_probs)
