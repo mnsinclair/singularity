@@ -50,14 +50,17 @@ class Person:
         # Initialise the conversation partner
         self.__conversation_partner = conversation_partner
 
+        # Final probs of taking actions (initially empty until calculated in action_select()
+        self.__current_action_probs = dict()
+
     def get_snapshot(self):
         """Returns a snapshot of the person's current state"""
         snapshot = {
             "name": self.__name,
             "personality_vector": self.__personality_vector.copy(),
             "emotional_state": self.__emotional_state_vector.copy(),
-            "base_action_probs": self.__base_action_probs.copy(),
             "location_state": self.__location_state.get_name(),
+            "current_action_probs": self.__current_action_probs.copy(),
         }
 
         if self.has_conversation_partner():
@@ -230,6 +233,8 @@ class Person:
         # Combine the two distributions
         combined_probs = self.combine_emotion_base_probs(
             filtered_emotional_probs, filtered_base_probs)
+
+        self.__current_action_probs = combined_probs
 
         # Select an action based on the combined distribution
         action = np.random.choice(
