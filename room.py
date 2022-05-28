@@ -24,19 +24,26 @@ class Room:
         Adjacent to: {self.get_adjacent_room_names()}
         """
 
-    def is_someone_free_to_chat(self):
+    def is_someone_free_to_chat(self, persons):
         """Returns true if someone ELSE is free to chat in this room"""
         for person in self.__people:
             # skip yourself
-            if person.get_name() == self.get_name():
+            if person.get_name() == persons.get_name():
                 continue
             if not person.has_conversation_partner():
+                #print(person.get_name(), 'is free')
                 return True
         else:
             return False
 
     def get_new_conversation_partner_for(self, person):
         """Randomly selects the first OTHER person in this room who is free to chat"""
+       
+
+        
+        
+
+
         return np.random.choice([partner for partner in self.__people if ((not partner.has_conversation_partner()) and (partner.get_name() != person.get_name()))])
 
     def get_name(self):
