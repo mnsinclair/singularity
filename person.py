@@ -249,6 +249,14 @@ class Person:
         new_emotional_state_vector = self.get_emotional_state_vector(
         ) + change_vector
 
+        # Ensure the emotional state vector remains in the range [-1,1] for all dimensions
+        for i, dim in enumerate(new_emotional_state_vector):
+            # If the emotional state vector has gone negative, set it to 0
+            if dim < -1:
+                new_emotional_state_vector[i] = -1
+            elif dim > 1:
+                new_emotional_state_vector[i] = 1
+
         # Set the new emotional state vector
         self.set_emotional_state_vector(new_emotional_state_vector)
 
