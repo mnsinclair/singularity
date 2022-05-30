@@ -47,9 +47,18 @@ def get_names(filepath="names.csv"):
 def get_personality_vector(personality_number):
     personality_seed = personality_number % 32
     personality_vector_string = bin(personality_seed)[2:]
+       
     personality_vector_string = "0" * \
         (5 - len(personality_vector_string)) + personality_vector_string
-    return np.array([int(char) for char in personality_vector_string])
+    intlist = []
+    for char in personality_vector_string:
+        if char == "0":
+            intlist.append(-1)
+        elif char == '1':
+            intlist.append(1)
+
+
+    return np.array(intlist)
 
 
 def initialise_all_people(all_possible_actions, rooms, num_people=32):

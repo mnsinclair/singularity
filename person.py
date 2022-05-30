@@ -104,7 +104,7 @@ class Person:
         assert(self.__base_action_probs ==
                None), "Base action probabilities already set"
 
-        max_likelihood = 1000  # Arbitrary large number.
+        max_likelihood = 10  # Arbitrary large number.
 
         # Initialise an empty dictionary
         base_action_probs = dict()
@@ -123,7 +123,7 @@ class Person:
                 base_action_probs[action] = max_likelihood
             else:
                 # Otherwise, the likelihood is inversely proportional to the distance (up to the maximum value)
-                # This happens when the distance is less than 0.001 units in magnitude.
+                # This happens when the distance is less than 0.1 units in magnitude.
                 base_action_probs[action] = min(
                     1 / personality_distance, max_likelihood)
         # Normalise the action probabilities to sum to 1
@@ -159,6 +159,7 @@ class Person:
         """This function returns the "emotional action probabilities" for the person,
         derived solely from the "emotional_state_vector" attribute."""
 
+        max_likelihood_emo = 10
         # Initialise an empty dictionary
         emotional_action_probs = dict()
         # Loop through all possible actions
@@ -171,7 +172,14 @@ class Person:
             # We want the probability to be inversely proportional to the distance.
             # That is, the more closely this person's emotional state aligns with the "most likely emotional state" for the action
             # The more likely this person is to take that action.
-            emotional_action_probs[action] = 1 / emotional_state_distance
+            if emotional_state_distance == 0:
+                # If the distance is 0, then the likelihood is maximum
+                emotional_action_probs[action] = max_likelihood_emo
+            else:
+                # Otherwise, the likelihood is inversely proportional to the distance (up to the maximum value)
+                # This happens when the distance is less than 0.1 units in magnitude.
+                emotional_action_probs[action] = min(
+                    1 / emotional_state_distance, max_likelihood_emo)
         # Normalise the action probabilities to sum to 1
         emotional_action_probs = self.normalise_action_probs(
             emotional_action_probs)
@@ -205,11 +213,11 @@ class Person:
         assert weighting >= 0 and weighting <= 1, "weighting must be between 0 and 1"
         assert emotion_probs.keys() == base_probs.keys(
         ), "Emotion and base action probabilities must have the same actions as keys"
-
+###
         combined_probs = dict()
         for key in emotion_probs.keys():
             combined_probs[key] = (
-                emotion_probs[key] * weighting + base_probs[key] / (1 + weighting))
+                emotion_probs[key] * (1 - weighting) + base_probs[key] * weighting)
         combined_probs = self.normalise_action_probs(combined_probs)
 
         return combined_probs
